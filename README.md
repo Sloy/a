@@ -1,8 +1,8 @@
-# a
+# $ a
 
-One short command for the adb chores Android developers repeat all day: animation scales, font size, screenshots, screen recordings, TalkBack and friends.
+Short command for the adb chores **Android developers** repeat all day: animation scales, font size, screenshots, screen recordings, TalkBack and friends.
 
-Run `a` bare and pick from an fzf menu, or pass the command and its argument to skip every prompt. Every run prints the equivalent one-liner, and adds it to your shell history, so the next time is one ↑ away.
+Run `a` and pick from an fzf menu, or pass the command and its argument to skip every prompt.
 
 ```
 $ a
@@ -14,24 +14,17 @@ $ a
 │   font-size         system font scale                      │
 │   ...                                                      │
 ╰────────────────────────────────────────────────────────────╯
-
-────────────────────────────────────────────────────────────
- ANDROID · FONT SIZE
- Device   Pixel 8 (35211FDH2000AB)
- Command  a font-size 1.5
-────────────────────────────────────────────────────────────
- ✓ font scale set to 1.5
 ```
 
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Sloy/a/main/install.sh | bash
+$ curl -fsSL https://raw.githubusercontent.com/Sloy/a/main/install.sh | bash
 ```
 
 Then open a new terminal and type `a`.
 
-The installer clones this repo into `~/.a` and adds one line to `~/.zshrc` (or `~/.bashrc` if bash is your shell):
+The installer clones this repo into `~/.a` and adds one line to `~/.zshrc` or `~/.bashrc`:
 
 ```bash
 [ -f "$HOME/.a/init.sh" ] && . "$HOME/.a/init.sh"
@@ -52,7 +45,6 @@ curl -fsSL https://raw.githubusercontent.com/Sloy/a/main/install.sh | A_NO_MODIF
 ### Requirements
 
 - macOS (`a paste` uses `pbpaste`; everything else is plain bash and adb)
-- `git`
 - [`fzf`](https://github.com/junegunn/fzf) for the interactive menus: `brew install fzf`
 - `adb` on your `PATH`, usually `$ANDROID_HOME/platform-tools`
 
