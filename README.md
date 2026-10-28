@@ -56,7 +56,7 @@ curl -fsSL https://raw.githubusercontent.com/Sloy/a/main/install.sh | A_NO_MODIF
 | `a screenshot` | `now` · `<seconds>` | Captures **every** connected device to `~/Downloads`, optionally after a countdown |
 | `a record` | — | Records the screen until you press enter, then pulls the mp4 to `~/Downloads` (Android caps it at 3 min) |
 | `a touch-pointer` | `on` · `off` | Shows or hides the circle drawn under every touch |
-| `a font-size` | `0.85` · `1` · `1.5` · `2` · `<scale>` | Sets the system font scale |
+| `a font-size` | `0.85` · `1` · `1.5` · `2` · `cycle` · `<scale>` | Sets the system font scale. `cycle` steps through every scale every 2s until you press enter, then restores the original |
 | `a talkback` | `toggle` · `on` · `off` | Turns the TalkBack screen reader on or off. Opens the Play Store if Accessibility Suite is missing |
 | `a navigation` | `gestures` · `buttons` | Switches between gesture and three-button navigation |
 | `a paste` | — | Types the macOS clipboard into the focused text field |

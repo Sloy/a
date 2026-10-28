@@ -7,14 +7,20 @@ set -uo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/common.sh"
 source "$A_LIB/device.sh"
 
+SCALES=(0.85 1.0 1.5 2.0)
+LABELS=(small default large largest)
+CYCLE_DELAY=2
+
 usage() {
   cat <<USAGE
-a font-size [0.85|1|1.5|2|<scale>]
+a font-size [0.85|1|1.5|2|cycle|<scale>]
 
   0.85    small
   1       default
   1.5     large
   2       largest
+  cycle   step through every scale above every ${CYCLE_DELAY}s until enter,
+          then restore the original scale
   <scale> any raw scale, e.g. 1.5
 
 Runs interactively when no argument is given.
@@ -31,8 +37,37 @@ if [[ -z "$arg" ]]; then
     "0.85|small" \
     "1|default" \
     "1.5|large" \
-    "2|largest"
+    "2|largest" \
+    "cycle|every scale in turn until enter"
   arg="$PICK_RESULT"
+fi
+
+set_scale() {
+  "${ADB[@]}" shell settings put system font_scale "$1"
+}
+
+cycle() {
+  resolve_device
+  banner "FONT SIZE" "a font-size cycle" "$DEVICE_LABEL"
+
+  original="$("${ADB[@]}" shell settings get system font_scale | tr -d '\r')"
+  [[ "$original" =~ ^[0-9]+(\.[0-9]+)?$ ]] || original="1.0"
+  trap 'printf "\n"; set_scale "$original" && ok "font scale restored to $original"' EXIT
+  trap 'exit 130' INT TERM
+
+  printf ' Cycling every %ss… %sPress enter to stop%s\n' "$CYCLE_DELAY" "$BOLD" "$RESET"
+  local i=0 n=${#SCALES[@]}
+  while true; do
+    set_scale "${SCALES[i % n]}" || die "failed to set font_scale"
+    printf '\r\033[K %s%s%s %s%s%s' "$CYAN" "${SCALES[i % n]}" "$RESET" "$DIM" "${LABELS[i % n]}" "$RESET"
+    read -r -t "$CYCLE_DELAY" && break
+    (( i++ ))
+  done
+}
+
+if [[ "$arg" == cycle ]]; then
+  cycle
+  exit 0
 fi
 
 if [[ "$arg" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
@@ -48,6 +83,6 @@ fi
 resolve_device
 banner "FONT SIZE" "a font-size $arg" "$DEVICE_LABEL"
 
-"${ADB[@]}" shell settings put system font_scale "$scale" || die "failed to set font_scale"
+set_scale "$scale" || die "failed to set font_scale"
 
 ok "font scale set to $scale"
