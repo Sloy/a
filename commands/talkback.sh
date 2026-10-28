@@ -9,6 +9,33 @@ source "$A_LIB/device.sh"
 
 TALKBACK_PACKAGE="com.google.android.marvin.talkback"
 TALKBACK_SERVICE="$TALKBACK_PACKAGE/com.google.android.marvin.talkback.TalkBackService"
+MAESTRO_DRIVER_PACKAGES=(dev.mobile.maestro.test dev.mobile.maestro)
+
+ui_automation_connected() {
+  "${ADB[@]}" shell dumpsys accessibility 2>/dev/null | grep -q "Ui Automation\["
+}
+
+talkback_running() {
+  "${ADB[@]}" shell dumpsys accessibility 2>/dev/null | grep -q "touchExplorationEnabled=true"
+}
+
+release_ui_automation() {
+  ui_automation_connected || return 0
+  warn "A UI automation client is blocking accessibility services, stopping the Maestro driver"
+  local pkg
+  for pkg in "${MAESTRO_DRIVER_PACKAGES[@]}"; do
+    "${ADB[@]}" shell am force-stop "$pkg" >/dev/null 2>&1
+  done
+}
+
+wait_for_talkback() {
+  local i
+  for (( i = 0; i < 20; i++ )); do
+    talkback_running && return 0
+    sleep 0.25
+  done
+  return 1
+}
 
 usage() {
   cat <<USAGE
@@ -67,8 +94,18 @@ if [[ "$action" == "on" ]] && ! package_installed "$TALKBACK_PACKAGE"; then
 fi
 
 if [[ "$action" == "on" ]]; then
+  release_ui_automation
+  "${ADB[@]}" shell settings put secure enabled_accessibility_services null >/dev/null 2>&1
   "${ADB[@]}" shell settings put secure enabled_accessibility_services "$TALKBACK_SERVICE" \
     || die "failed to enable TalkBack"
+  "${ADB[@]}" shell settings put secure accessibility_enabled 1 \
+    || die "failed to enable accessibility"
+  if ! wait_for_talkback; then
+    if ui_automation_connected; then
+      die "TalkBack is enabled but blocked by a UI automation client (Appium, uiautomator, a live Maestro session). Stop it and rerun: a talkback on"
+    fi
+    die "TalkBack is enabled but did not start within 5s"
+  fi
 else
   "${ADB[@]}" shell settings put secure enabled_accessibility_services null \
     || die "failed to disable TalkBack"
