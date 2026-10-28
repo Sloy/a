@@ -26,7 +26,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Testing
 
-No test suite. Check changes by running them against a connected emulator, e.g. `./a animations off`, and test the installer in a throwaway home:
+No test suite. Always test changes locally before committing and pushing.
+
+The installed `a` shell function runs whatever lives at `~/.a`. On a development machine `~/.a` should be a symlink to this working copy, so the user's shell runs local edits immediately:
+
+```bash
+mv ~/.a ~/.a.bak && ln -s "$PWD" ~/.a
+```
+
+If `~/.a` is a regular directory instead, local edits are invisible to the user's `a` until they are pushed and `a update` runs.
+
+Check changes by running them against a connected emulator, e.g. `./a animations off`, and test the installer in a throwaway home:
 
 ```bash
 HOME=$(mktemp -d) A_REPO="$PWD" bash install.sh
