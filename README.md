@@ -19,7 +19,7 @@ $ a
 ## Install
 
 ```bash
-$ curl -fsSL https://raw.githubusercontent.com/Sloy/a/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Sloy/a/main/install.sh | bash
 ```
 
 Then open a new terminal and type `a`.
