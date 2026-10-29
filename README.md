@@ -16,6 +16,20 @@ $ a
 ╰────────────────────────────────────────────────────────────╯
 ```
 
+
+```
+$ a animations
+╭─ Animation scale ───────────────────╮
+│ › ↑↓ move · enter select · esc quit │
+│ ❯ off   disable animations (0.0)    │
+│   fast  0.5× speed                  │
+│   on    normal speed (1.0)          │
+│   slow  5.0× slow motion            │
+╰─────────────────────────────────────╯
+
+ ✓ animation scales set to 0.0
+```
+
 ## Install
 
 ```bash
