@@ -9,13 +9,14 @@ source "$A_LIB/device.sh"
 
 usage() {
   cat <<USAGE
-a animations [off|fast|on|slow|<scale>]
+a animations [off|fast|on|slow|<scale>|get]
 
   off     disable animations (0.0)
   fast    0.5×
   on      normal speed (1.0)
   slow    5.0×
   <scale> any raw scale, e.g. 2 or 0.25
+  get     print the current scales without changing them
 
 Runs interactively when no argument is given.
 USAGE
@@ -31,8 +32,24 @@ if [[ -z "$arg" ]]; then
     "off|disable animations (0.0)" \
     "fast|0.5× speed" \
     "on|normal speed (1.0)" \
-    "slow|5.0× slow motion"
+    "slow|5.0× slow motion" \
+    "get|show the current scales"
   arg="$PICK_RESULT"
+fi
+
+SETTINGS=(window_animation_scale transition_animation_scale animator_duration_scale)
+
+if [[ "$arg" == get ]]; then
+  resolve_device
+  banner "ANIMATIONS" "a animations get" "$DEVICE_LABEL"
+  for setting in "${SETTINGS[@]}"; do
+    value="$("${ADB[@]}" shell settings get global "$setting" | tr -d '\r')" \
+      || die "failed to read $setting"
+    # Never-touched settings read back as `null`; Android treats that as 1.0.
+    [[ "$value" == null ]] && value="1.0 (default)"
+    printf ' %-28s %s\n' "$setting" "$value"
+  done
+  exit 0
 fi
 
 case "$arg" in
@@ -54,7 +71,7 @@ esac
 resolve_device
 banner "ANIMATIONS" "a animations $arg" "$DEVICE_LABEL"
 
-for setting in window_animation_scale transition_animation_scale animator_duration_scale; do
+for setting in "${SETTINGS[@]}"; do
   "${ADB[@]}" shell settings put global "$setting" "$scale" || die "failed to set $setting"
 done
 

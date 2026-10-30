@@ -13,7 +13,7 @@ CYCLE_DELAY=2
 
 usage() {
   cat <<USAGE
-a font-size [0.85|1|1.5|2|cycle|<scale>]
+a font-size [0.85|1|1.5|2|cycle|<scale>|get]
 
   0.85    small
   1       default
@@ -22,6 +22,7 @@ a font-size [0.85|1|1.5|2|cycle|<scale>]
   cycle   step through every scale above every ${CYCLE_DELAY}s until enter,
           then restore the original scale
   <scale> any raw scale, e.g. 1.5
+  get     print the current scale without changing it
 
 Runs interactively when no argument is given.
 USAGE
@@ -38,7 +39,8 @@ if [[ -z "$arg" ]]; then
     "1|default" \
     "1.5|large" \
     "2|largest" \
-    "cycle|every scale in turn until enter"
+    "cycle|every scale in turn until enter" \
+    "get|show the current scale"
   arg="$PICK_RESULT"
 fi
 
@@ -64,6 +66,17 @@ cycle() {
     (( i++ ))
   done
 }
+
+if [[ "$arg" == get ]]; then
+  resolve_device
+  banner "FONT SIZE" "a font-size get" "$DEVICE_LABEL"
+  value="$("${ADB[@]}" shell settings get system font_scale | tr -d '\r')" \
+    || die "failed to read font_scale"
+  # Never-touched setting reads back as `null`; Android treats that as 1.0.
+  [[ "$value" == null ]] && value="1.0 (default)"
+  printf ' font_scale  %s\n' "$value"
+  exit 0
+fi
 
 if [[ "$arg" == cycle ]]; then
   cycle

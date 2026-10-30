@@ -66,11 +66,11 @@ curl -fsSL https://raw.githubusercontent.com/Sloy/a/main/install.sh | A_NO_MODIF
 
 | Command | Arguments | What it does |
 |---|---|---|
-| `a animations` | `off` · `fast` · `on` · `slow` · `<scale>` | Sets window, transition and animator scales together (0.0, 0.5, 1.0, 5.0 or any number) |
+| `a animations` | `off` · `fast` · `on` · `slow` · `<scale>` · `get` | Sets window, transition and animator scales together (0.0, 0.5, 1.0, 5.0 or any number). `get` prints the current scales |
 | `a screenshot` | `now` · `<seconds>` | Captures **every** connected device to `~/Downloads`, optionally after a countdown |
 | `a record` | — | Records the screen until you press enter, then pulls the mp4 to `~/Downloads` (Android caps it at 3 min) |
 | `a touch-pointer` | `on` · `off` | Shows or hides the circle drawn under every touch |
-| `a font-size` | `0.85` · `1` · `1.5` · `2` · `cycle` · `<scale>` | Sets the system font scale. `cycle` steps through every scale every 2s until you press enter, then restores the original |
+| `a font-size` | `0.85` · `1` · `1.5` · `2` · `cycle` · `<scale>` · `get` | Sets the system font scale. `cycle` steps through every scale every 2s until you press enter, then restores the original. `get` prints the current scale |
 | `a talkback` | `toggle` · `on` · `off` | Turns the TalkBack screen reader on or off. Opens the Play Store if Accessibility Suite is missing |
 | `a navigation` | `gestures` · `buttons` | Switches between gesture and three-button navigation |
 | `a paste` | — | Types the macOS clipboard into the focused text field |
