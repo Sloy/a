@@ -45,7 +45,15 @@ if [[ "$arg" == get ]]; then
   value="$("${ADB[@]}" shell settings get system screen_off_timeout | tr -d '\r')" \
     || die "failed to read screen_off_timeout"
   if [[ "$value" =~ ^[0-9]+$ ]]; then
-    printf ' screen_off_timeout  %s ms (%ss)\n' "$value" "$((value / 1000))"
+    seconds=$((value / 1000))
+    if (( seconds < 60 )); then
+      pretty="${seconds}s"
+    elif (( seconds % 60 == 0 )); then
+      pretty="$((seconds / 60))m"
+    else
+      pretty="$((seconds / 60))m $((seconds % 60))s"
+    fi
+    printf ' screen_off_timeout  %s\n' "$pretty"
   else
     printf ' screen_off_timeout  %s\n' "$value"
   fi
